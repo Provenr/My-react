@@ -17,21 +17,20 @@
 
 const path = require('path');
 const webpack = require('webpack');
-console.log(path.join(__dirname, '..', 'dist'))
 
 module.exports = {
     mode: 'development',
     // 文件监听 默认false
     // 轮询的机制 监听 每个文件最后修改时间
-    // watch: true,
+    watch: true,
     // 开启监听模式时，才有意义
-    // watchOptions: {
-    //     ignored: /node_modules/,
-    //     // 监听变化发生之后 300ms 再去执行，默认300ms
-    //     aggregateTimeout: 300,
-    //     // 判断文件发生变化 是轮询文件，默认每秒1000次
-    //     poll: 1000
-    // },
+    watchOptions: {
+        ignored: /node_modules/,
+        // 监听变化发生之后 300ms 再去执行，默认300ms
+        aggregateTimeout: 300,
+        // 判断文件发生变化 是轮询文件，默认每秒1000次
+        poll: 1000
+    },
     entry: {
        index: path.resolve(__dirname, '..', 'src', 'index'),
        search: path.resolve(__dirname, '..', 'src', 'search')
@@ -39,6 +38,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '..', 'dist'),
         filename: '[name].js',
+        publicPath: '../',
     },
 
     module: {
@@ -88,7 +88,7 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin()
     ],
     devServer: {
-        contentBase: path.join(__dirname, '..', 'dist'),
+        contentBase: '../',
         hot: true,
         port: 8090
     }

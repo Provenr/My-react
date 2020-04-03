@@ -11,7 +11,7 @@ class Search extends React.Component {
         return <div className="container">
             <img src={ provenr } alt=""/>
             <div className="iconfont icon-weixinzhifu"></div>
-            <div className="search-text">Search Text</div>
+            <div className="search-text">Search Textsafasdf</div>
         </div>;
     }
 }
