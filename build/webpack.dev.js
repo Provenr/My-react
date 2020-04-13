@@ -1,44 +1,67 @@
-/*
- * @file: 
- * @author: Provenr
- * @Date: 2020-03-06 01:54:57
- * @LastEditors: Provenr
- * @LastEditTime: 2020-03-06 10:40:52
- * @FilePath: /my-react/build/webpack.config.js
- */
-/*
- * @file: Do not edit
- * @author: Provenr
- * @Date: 2020-03-06 01:54:57
- * @LastEditors: Provenr
- * @LastEditTime: 2020-03-06 10:15:53
- * @FilePath: /my-react/build/webpack.config.js
- */
+'use strict'
 
+const glob = require('glob')
 const path = require('path');
 const webpack = require('webpack');
+const HtmlInlineCSSWebpackPlugin = require('html-inline-css-webpack-plugin').default
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+const setMPA = () => {
+    const entry = {};
+    const htmlWebpackPlugins = [];
+    const entryFiles = glob.sync(path.join(__dirname, '..', '/src/*/index.js'));
+
+
+    Object.keys(entryFiles)
+      .map((index) => {
+          const entryFile = entryFiles[index];
+          const match = entryFile.match(/src\/(.*)\/index\.js/);
+          const pageName = match && match[1];
+          entry[pageName] = entryFile;
+          htmlWebpackPlugins.push(
+            new HtmlWebpackPlugin({
+                inlineSource: '.css$',
+                template: path.join(__dirname, '..', `src/${pageName}/index.html`),
+                filename: `${pageName}.html`,
+                chunks: [pageName],
+                inject: true,
+                // minify: {
+                //   html5: true,
+                //   collapseWhitespace: true,
+                //   preserveLineBreaks: false,
+                //   minifyCSS: true,
+                //   minifyJS: true,
+                //   removeComments: false
+                // }
+            })
+          );
+      })
+
+    return {
+        entry,
+        htmlWebpackPlugins
+    }
+}
+const { entry, htmlWebpackPlugins } = setMPA();
 
 module.exports = {
     mode: 'development',
     // 文件监听 默认false
     // 轮询的机制 监听 每个文件最后修改时间
-    watch: true,
+    // watch: true,
     // 开启监听模式时，才有意义
-    watchOptions: {
-        ignored: /node_modules/,
-        // 监听变化发生之后 300ms 再去执行，默认300ms
-        aggregateTimeout: 300,
-        // 判断文件发生变化 是轮询文件，默认每秒1000次
-        poll: 1000
-    },
-    entry: {
-       index: path.resolve(__dirname, '..', 'src', 'index'),
-       search: path.resolve(__dirname, '..', 'src', 'search')
-    },
+    // watchOptions: {
+    //     ignored: /node_modules/,
+    //     // 监听变化发生之后 300ms 再去执行，默认300ms
+    //     aggregateTimeout: 300,
+    //     // 判断文件发生变化 是轮询文件，默认每秒1000次
+    //     poll: 1000
+    // },
+    entry: entry,
     output: {
         path: path.resolve(__dirname, '..', 'dist'),
-        filename: '[name].js',
-        publicPath: '../',
+        filename: '[name][hash:8].js',
     },
 
     module: {
@@ -72,7 +95,9 @@ module.exports = {
                 use: [{
                     loader: 'url-loader',
                     options: {
-                        limit: 20480
+                        limit: 20480,
+                        // 这里的hash 采用md5 生成
+                        name: 'img/[name][hash:8].[ext]'
                     }
                 }]
             },
@@ -85,11 +110,14 @@ module.exports = {
     plugins: [
         // 核心  HMR server（服务端） + HMMR runtime（浏览器端）通过websocket 通信
         // HMR runtime 注入到bundle.js
-        new webpack.HotModuleReplacementPlugin()
-    ],
+        new webpack.HotModuleReplacementPlugin(),
+        new CleanWebpackPlugin()
+    ].concat(htmlWebpackPlugins).concat(new HtmlInlineCSSWebpackPlugin()),
     devServer: {
-        contentBase: '../',
+        contentBase: path.join(__dirname, '..', 'dist'),
         hot: true,
-        port: 8090
-    }
+        port: 8090,
+        // open: true    //  启动DevServer  时使用浏览器（每次启动都会自动打开新页面）
+    },
+    devtool: "source-map"
 }

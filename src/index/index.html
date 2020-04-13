@@ -5,13 +5,14 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!--    // TODO: 资源内联未实现  可以打包成功 但是没有解析-->
+<!--    ${require('raw-loader!babel-loader!./meta.html')}-->
     <title>Document</title>
+<!--    <script>${ require('raw-loader!babel-loader!../../node_modules/lib-flexible/flexible.js')}</script>-->
 
 </head>
 <body>
  <div id="root"></div>
 
 </body>
-<!--// 引入js文件一定要放在body 后 放在 head 中 此时DOM还没有建立完毕 会报错：Target container is not a DOM element-->
-<script src="./dist/search.js"></script>
 </html>

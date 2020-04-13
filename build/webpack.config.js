@@ -38,7 +38,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, '..', 'dist'),
-        filename: '[name].js',
+        filename: '[name]_[hash:8].js',
     },
 
     module: {
@@ -72,13 +72,20 @@ module.exports = {
                 use: [{
                     loader: 'url-loader',
                     options: {
-                        limit: 20480
+                        limit: 10240,
+                        name: '[name]_[hash:8].[ext]'
                     }
                 }]
             },
             {
                 test: /\.(woff|woff2|eot|ttf|otf)$/,
-                use: 'file-loader'
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        limit: 10240,
+                        name: '[name]_[hash:8][ext]'
+                    }
+                }]
             }
         ]
     },
