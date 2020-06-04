@@ -6,12 +6,25 @@ import provenr from '../image/provenr.jpeg'
 
 class Search extends React.Component {
   render () {
-    debugger
     return <div className="container">
       <img src={provenr} alt=""/>
       <div className="iconfont icon-weixinzhifu"></div>
       <div className="search-text">CleanWebpackPlugin 使用</div>
     </div>
+  }
+}
+
+class Index extends React.Component {
+  render () {
+    return (
+      <ol>
+        {
+          React.Children.map(this.props.children, function (child) {
+            return <li>{child}</li>
+          })
+        }
+      </ol>
+    );
   }
 }
 
